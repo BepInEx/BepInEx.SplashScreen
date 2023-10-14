@@ -3,9 +3,12 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
+
+[assembly: AssemblyTitle("BepInEx.SplashScreen.GUI")]
 
 namespace BepInEx.SplashScreen
 {
@@ -137,33 +140,36 @@ namespace BepInEx.SplashScreen
             {
                 switch (message)
                 {
-                    case "Preloader started":
+                    case "Preloader started": //bep5
                         RunEventsUpTo(LoadEvent.PreloaderStart);
                         break;
                     // For some reason "Preloader finished" is unreliable, it can
                     // be called before "Preloader started", and then again after.
-                    case "Preloader finished":
+                    case "Preloader finished": //bep5
                         //if (_lastLoadEvent == LoadEvent.PreloaderStart)
                         RunEventsUpTo(LoadEvent.PreloaderFinish);
                         break;
-                    case "Chainloader started":
+                    case "Chainloader started": //bep5
+                    case "Chainloader initialized": //bep6
                         RunEventsUpTo(LoadEvent.ChainloaderStart);
                         break;
-                    case "Chainloader startup complete":
+                    case "Chainloader startup complete": //bep5 and bep6
                         RunEventsUpTo(LoadEvent.ChainloaderFinish);
                         break;
 
                     default:
-                        const string patching = "Patching ";
-                        const string skipping = "Skipping ";
-                        const string loading = "Loading ";
-                        if (message.StartsWith(patching))
+                        if (message.EndsWith(" patcher plugins loaded", StringComparison.Ordinal)) //bep6
+                        {
+                            RunEventsUpTo(LoadEvent.PreloaderStart);
+                        }
+                        else if (message.StartsWith("Patching ", StringComparison.Ordinal) || // bep5
+                                 message.StartsWith("Executing ", StringComparison.Ordinal) && message.EndsWith(" patch(es)", StringComparison.Ordinal)) //bep6
                         {
                             RunEventsUpTo(LoadEvent.PreloaderStart);
 
                             _mainForm.SetStatusDetail(message);
                         }
-                        else if (message.StartsWith(loading))
+                        else if (message.StartsWith("Loading ", StringComparison.Ordinal)) //bep5 and bep6
                         {
                             RunEventsUpTo(LoadEvent.ChainloaderStart);
 
@@ -172,14 +178,14 @@ namespace BepInEx.SplashScreen
                             _pluginProcessedCount++;
                             _mainForm.SetPluginProgress((int)Math.Round(100f * (_pluginProcessedCount / (float)_pluginCount)));
                         }
-                        else if (message.StartsWith(skipping))
+                        else if (message.StartsWith("Skipping ", StringComparison.Ordinal)) //bep5 and bep6?
                         {
                             RunEventsUpTo(LoadEvent.ChainloaderStart);
 
                             _pluginProcessedCount++;
                             _mainForm.SetPluginProgress((int)Math.Round(100f * (_pluginProcessedCount / (float)_pluginCount)));
                         }
-                        else if (message.EndsWith(" plugins to load"))
+                        else if (message.EndsWith(" plugins to load", StringComparison.Ordinal)) //bep5 and bep6
                         {
                             RunEventsUpTo(LoadEvent.ChainloaderStart);
 

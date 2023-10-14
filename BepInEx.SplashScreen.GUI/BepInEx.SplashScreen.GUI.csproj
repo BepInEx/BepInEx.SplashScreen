@@ -18,7 +18,7 @@
     <DebugType>embedded</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\bin\BepInEx\patchers\BepInEx.SplashScreen\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;GUI</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -27,7 +27,7 @@
     <DebugType>embedded</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\bin\BepInEx\patchers\BepInEx.SplashScreen\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;GUI</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DebugSymbols>true</DebugSymbols>
@@ -58,17 +58,9 @@
       <DependentUpon>SplashScreen.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="SplashScreen.resx">
       <DependentUpon>SplashScreen.cs</DependentUpon>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\BepInEx.SplashScreen.Patcher\BepInEx.SplashScreen.Patcher.csproj">
-      <Project>{449b9f51-bbe5-4d4a-8936-e0a3081d79cb}</Project>
-      <Name>BepInEx.SplashScreen.Patcher</Name>
-      <Private>False</Private>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\LICENSE">
@@ -84,5 +76,9 @@
   <ItemGroup>
     <None Include="bepinex.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="..\BepInEx.SplashScreen.Patcher.Common\BepInEx.SplashScreen.Patcher.Common.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
