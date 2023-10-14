@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
-using BepInEx.SplashScreen.Patcher.Common;
+using BepInEx.SplashScreen;
 
 [assembly: AssemblyDescription("Splash screen that shows loading progress when a game patched with BepInEx is loading.")]
 [assembly: AssemblyCompany("https://github.com/BepInEx/BepInEx.SplashScreen")]

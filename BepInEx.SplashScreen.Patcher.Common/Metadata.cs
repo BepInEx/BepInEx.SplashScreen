@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace BepInEx.SplashScreen.Patcher.Common
+﻿namespace BepInEx.SplashScreen
 {
     internal class Metadata
     {

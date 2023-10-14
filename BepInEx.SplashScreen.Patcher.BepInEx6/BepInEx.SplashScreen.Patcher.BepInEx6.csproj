@@ -4,6 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <DefineConstants>$(DefineConstants);Bep6</DefineConstants>
+    <RootNamespace>BepInEx.SplashScreen</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

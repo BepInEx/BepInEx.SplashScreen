@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using BepInEx.Configuration;
+using HarmonyLib;
 using Mono.Cecil;
 
 [assembly: AssemblyTitle("BepInEx.SplashScreen.Patcher")]
@@ -12,11 +14,10 @@ namespace BepInEx.SplashScreen
     {
         public const string Version = "1.0";
 
-        private static int _initialized;
-
-        static BepInExSplashScreenPatcher() //todo test
+        static BepInExSplashScreenPatcher()
         {
-            Initialize();
+            // Use whatever gets us to run faster, or at all
+            Init();
         }
 
         public static IEnumerable<string> TargetDLLs
@@ -24,7 +25,7 @@ namespace BepInEx.SplashScreen
             get
             {
                 // Use whatever gets us to run faster, or at all
-                Initialize();
+                Init();
                 return Enumerable.Empty<string>();
             }
         }
@@ -32,10 +33,11 @@ namespace BepInEx.SplashScreen
         public static void Patch(AssemblyDefinition _)
         {
             // Use whatever gets us to run faster, or at all
-            Initialize();
+            Init();
         }
 
-        public static void Initialize()
+        private static int _initialized;
+        public static void Init()
         {
             // Only allow to run once
             if (Interlocked.Exchange(ref _initialized, 1) == 1) return;
