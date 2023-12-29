@@ -61,9 +61,7 @@ namespace BepInEx.SplashScreen
                     // Get game location and icon
                     var gameExecutable = gameProcess.MainModule.FileName;
                     _mainForm.SetGameLocation(Path.GetDirectoryName(gameExecutable));
-                    var icon = IconManager.GetLargeIcon(gameExecutable, true, true);
-                    _mainForm.Icon = icon;
-                    _mainForm.SetIcon(icon.ToBitmap());
+                    _mainForm.SetIcon(IconManager.GetLargeIcon(gameExecutable, true, true).ToBitmap());
 
                     BeginSnapPositionToGameWindow(gameProcess);
 
@@ -279,33 +277,20 @@ namespace BepInEx.SplashScreen
                     if (default(NativeMethods.RECT).Equals(rct))
                         continue;
 
+                    var x = rct.Left + (rct.Right - rct.Left) / 2 - _mainForm.Width / 2;
+                    var y = rct.Top + (rct.Bottom - rct.Top) / 2 - _mainForm.Height / 2;
+                    var newLocation = new Point(x, y);
+
+                    if (_mainForm.Location != newLocation)
+                        _mainForm.Location = newLocation;
+
                     if (_mainForm.FormBorderStyle != FormBorderStyle.None)
                     {
                         // At this point the form is snapped to the main game window so prevent user from trying to drag it
                         _mainForm.FormBorderStyle = FormBorderStyle.None;
                         //_mainForm.BackColor = Color.White;
                         _mainForm.PerformLayout();
-
-                        // Check for fullscreen
-                        long style = NativeMethods.GetWindowLong(gameProcess.MainWindowHandle, NativeMethods.GWL_STYLE);
-                        bool hasBorder = (style & NativeMethods.WS_BORDER) != 0;
-                        if(hasBorder)
-                        {
-                            NativeMethods.SetParent(_mainForm.Handle, gameProcess.MainWindowHandle);
-                        }
-                        else
-                        {
-                            NativeMethods.SetWindowLong(_mainForm.Handle, NativeMethods.GWL_HWNDPARENT, gameProcess.MainWindowHandle);
-                        }
                     }
-                    _mainForm.Invalidate();
-
-                    var x = (rct.Right - rct.Left) / 2 - _mainForm.Width / 2;
-                    var y = (rct.Bottom - rct.Top) / 2 - _mainForm.Height / 2;
-                    var newLocation = new Point(x, y);
-
-                    if (_mainForm.Location != newLocation)
-                        _mainForm.Location = newLocation;
                 }
             }
             catch (Exception)
@@ -321,16 +306,6 @@ namespace BepInEx.SplashScreen
 
         private static class NativeMethods
         {
-
-            [DllImport("user32.dll")]
-            public static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
-
-            [DllImport("user32.dll")]
-            public static extern long GetWindowLong(IntPtr hWnd, int nIndex);
-            
-            [DllImport("user32.dll")]
-            public static extern int SetWindowLong(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
-
             [DllImport("user32.dll")]
             [return: MarshalAs(UnmanagedType.Bool)]
             public static extern bool GetWindowRect(HandleRef hWnd, out RECT lpRect);
@@ -343,10 +318,6 @@ namespace BepInEx.SplashScreen
                 public int Right;       // x position of lower-right corner
                 public int Bottom;      // y position of lower-right corner
             }
-
-            public const int GWL_HWNDPARENT = -8;
-            public const int GWL_STYLE = -16;
-            public const int WS_BORDER = 0x00800000;
         }
 
         #endregion
