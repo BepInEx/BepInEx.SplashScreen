@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BepInEx.Preloader.Core" Version="6.0.0-be.674" />
+    <PackageReference Include="BepInEx.Preloader.Core" Version="6.0.0-be.716" />
   </ItemGroup>
 
   <Import Project="..\BepInEx.SplashScreen.Patcher.Common\BepInEx.SplashScreen.Patcher.Common.projitems" Label="Shared" />

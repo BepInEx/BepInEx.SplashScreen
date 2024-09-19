@@ -47,7 +47,9 @@ namespace BepInEx.SplashScreen
                     }
                 }
 
-                var guiExecutablePath = Path.Combine(Path.GetDirectoryName(typeof(SplashScreenController).Assembly.Location) ?? Path.Combine(Paths.PatcherPluginPath, "BepInEx.SplashScreen"), "BepInEx.SplashScreen.GUI.exe");
+                var assemblyLocation = typeof(SplashScreenController).Assembly.Location;
+                Console.WriteLine(assemblyLocation);
+                var guiExecutablePath = Path.Combine(Path.GetDirectoryName(assemblyLocation) ?? Path.Combine(Paths.PatcherPluginPath, "BepInEx.SplashScreen"), "BepInEx.SplashScreen.GUI.exe");
 
                 if (!File.Exists(guiExecutablePath))
                     throw new FileNotFoundException("Executable not found or inaccessible at " + guiExecutablePath);
@@ -85,6 +87,8 @@ namespace BepInEx.SplashScreen
         {
             try
             {
+                Thread.Sleep(100);
+
                 var guiProcess = (Process)processArg;
 
                 guiProcess.Exited += (sender, args) => KillSplash();
@@ -103,7 +107,15 @@ namespace BepInEx.SplashScreen
 
                 guiProcess.StandardInput.AutoFlush = false;
 
-                Logger.LogDebug("Connected to the GUI process");
+                try
+                {
+                    Logger.LogDebug("Connected to the GUI process");
+                }
+                catch (InvalidOperationException)
+                {
+                    Thread.Sleep(50);
+                    Logger.LogDebug("Connected to the GUI process");
+                }
 
                 var any = false;
                 while (!guiProcess.HasExited)
