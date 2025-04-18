@@ -121,7 +121,6 @@ namespace BepInEx.SplashScreen
             {
                 var gameProcess = (Process)processArg;
 
-                //Console.InputEncoding = Encoding.UTF8;
                 using (var inStream = Console.OpenStandardInput())
                 using (var inReader = new StreamReader(inStream))
                 {
@@ -131,7 +130,15 @@ namespace BepInEx.SplashScreen
                         _AliveTimer.Stop();
                         _AliveTimer.Start();
 
-                        ProcessInputMessage(inReader.ReadLine());
+                        var line = inReader.ReadLine();
+
+                        if (line == null) // If no data, wait a bit
+                        {
+                            Thread.Sleep(100);
+                            continue;
+                        }
+
+                        ProcessInputMessage(line);
                     }
                 }
             }
@@ -179,6 +186,8 @@ namespace BepInEx.SplashScreen
                         break;
                     case "Chainloader startup complete": //bep5 and bep6
                         RunEventsUpTo(LoadEvent.ChainloaderFinish);
+                        Thread.Sleep(5000); // Failsafe
+                        RunEventsUpTo(LoadEvent.LoadFinished);
                         break;
 
                     default:
