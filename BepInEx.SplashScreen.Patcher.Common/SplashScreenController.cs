@@ -48,7 +48,7 @@ namespace BepInEx.SplashScreen
                 }
 
                 var assemblyLocation = typeof(SplashScreenController).Assembly.Location;
-                Console.WriteLine(assemblyLocation);
+                //Console.WriteLine(assemblyLocation);
                 var guiExecutablePath = Path.Combine(Path.GetDirectoryName(assemblyLocation) ?? Path.Combine(Paths.PatcherPluginPath, "BepInEx.SplashScreen"), "BepInEx.SplashScreen.GUI.exe");
 
                 if (!File.Exists(guiExecutablePath))
