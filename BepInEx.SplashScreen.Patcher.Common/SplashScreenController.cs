@@ -47,16 +47,29 @@ namespace BepInEx.SplashScreen
                     }
                 }
 
+                var currentProcess = Process.GetCurrentProcess();
+
+                var renameConf = config.Bind("SplashScreen", "RenameExe", true, "Automatically rename the splash .exe file to GameName.SplashScreen.GUI.dll to prevent Discord from mistaking the game as a different game.");
+                var exeNameProc = currentProcess.ProcessName + ".SplashScreen.GUI.exe";
+                var exeNameOrig = "BepInEx.SplashScreen.GUI.exe";
+
                 var assemblyLocation = typeof(SplashScreenController).Assembly.Location;
-                //Console.WriteLine(assemblyLocation);
-                var guiExecutablePath = Path.Combine(Path.GetDirectoryName(assemblyLocation) ?? Path.Combine(Paths.PatcherPluginPath, "BepInEx.SplashScreen"), "BepInEx.SplashScreen.GUI.exe");
+                var assemblyDirectory = Path.GetDirectoryName(assemblyLocation) ?? Path.Combine(Paths.PatcherPluginPath, "BepInEx.SplashScreen");
+                var guiExecutablePath = Path.Combine(assemblyDirectory, renameConf.Value ? exeNameProc : exeNameOrig);
 
                 if (!File.Exists(guiExecutablePath))
-                    throw new FileNotFoundException("Executable not found or inaccessible at " + guiExecutablePath);
+                {
+                    var otherExePath = Path.Combine(assemblyDirectory, !renameConf.Value ? exeNameProc : exeNameOrig);
+
+                    if (File.Exists(otherExePath))
+                        File.Move(otherExePath, guiExecutablePath);
+                    else
+                        throw new FileNotFoundException("Executable not found or inaccessible at " + guiExecutablePath);
+                }
 
                 Logger.Log(LogLevel.Debug, "Starting GUI process: " + guiExecutablePath);
 
-                var psi = new ProcessStartInfo(guiExecutablePath, Process.GetCurrentProcess().Id.ToString())
+                var psi = new ProcessStartInfo(guiExecutablePath, currentProcess.Id.ToString())
                 {
                     UseShellExecute = false,
                     RedirectStandardInput = true,
