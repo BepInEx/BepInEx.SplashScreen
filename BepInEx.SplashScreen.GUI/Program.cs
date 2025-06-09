@@ -186,8 +186,9 @@ namespace BepInEx.SplashScreen
                         break;
                     case "Chainloader startup complete": //bep5 and bep6
                         RunEventsUpTo(LoadEvent.ChainloaderFinish);
-                        Thread.Sleep(5000); // Failsafe
-                        RunEventsUpTo(LoadEvent.LoadFinished);
+                        _AliveTimer.Stop();
+                        _AliveTimer.Interval = 5000;
+                        _AliveTimer.Start();
                         break;
 
                     default:
