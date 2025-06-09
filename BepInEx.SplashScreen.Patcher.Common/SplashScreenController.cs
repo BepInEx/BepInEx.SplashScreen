@@ -18,11 +18,11 @@ namespace BepInEx.SplashScreen
         private static LoadingLogListener _logListener;
         private static Process _guiProcess;
 
-        public static void SpawnSplash()
+        public static void SpawnSplash(ConfigFile config)
         {
             try
             {
-                var config = (ConfigFile)AccessTools.Property(typeof(ConfigFile), "CoreConfig").GetValue(null, null);
+                if (config == null) throw new ArgumentNullException(nameof(config));
 
                 var isEnabled = config.Bind("SplashScreen", "Enabled", true, "Display a splash screen with information about game load progress on game start-up.").Value;
 #if DEBUG

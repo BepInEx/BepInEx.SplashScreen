@@ -42,7 +42,10 @@ namespace BepInEx.SplashScreen
             // Only allow to run once
             if (Interlocked.Exchange(ref _initialized, 1) == 1) return;
 
-            SplashScreenController.SpawnSplash();
+            var configPath = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, "BepInEx.SplashScreen.cfg");
+            var metadata = new BepInPlugin("BepInEx.SplashScreen.Patcher", "BepInEx.SplashScreen", Version);
+            var config = new ConfigFile(configPath, false, metadata);
+            SplashScreenController.SpawnSplash(config);
         }
     }
 }
