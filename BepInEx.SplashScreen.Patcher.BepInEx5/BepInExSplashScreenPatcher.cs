@@ -12,7 +12,7 @@ namespace BepInEx.SplashScreen
 {
     public static class BepInExSplashScreenPatcher
     {
-        public const string Version = "1.0";
+        public const string Version = Metadata.Version;
 
         static BepInExSplashScreenPatcher()
         {
